@@ -208,6 +208,10 @@
   web.connection = sdk;
   web.instance = '87011';
   web.instanceName = 'HBL HR Demo';
+  $(document).ready(function () {
+				$('#chat').val('get_greetings');
+				web.sendMessage();
+			});
   document.getElementById('chat').addEventListener('keypress', function(event) {
    if (event.keyCode == 13) {
      setSenderMessage();                        
