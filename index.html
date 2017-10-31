@@ -209,8 +209,9 @@
   web.instance = '87011';
   web.instanceName = 'HBL HR Demo';
   $(document).ready(function () {
-				$('#chat').val('get_greetings');
+				$('#chat').val('get greetings');
 				web.sendMessage();
+	  setReciverMessage();
 			});
   document.getElementById('chat').addEventListener('keypress', function(event) {
    if (event.keyCode == 13) {
