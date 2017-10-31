@@ -211,7 +211,12 @@
   $(document).ready(function () {
 				$('#chat').val('get greetings');
 				web.sendMessage();
-	  setReciverMessage();
+	  var response = document.getElementById('response').innerHTML;
+        var responseDiv = '<div class="msg_container base_receive"><div class="col-md-2 col-xs-2 avatar"><img src="images/hbl_thumbnail.png" class="img-responsive"></div><div class="col-md-10 col-xs-10"><div class="messages msg_receive"><p>'+response+'</p></div></div>';
+          $('#scroller-wrap').append(responseDiv);
+          //Scroll to bottom of div element
+          var scrollerWrap = document.getElementById("scroller-wrap");
+          scrollerWrap.scrollTop = scrollerWrap.scrollHeight;
 			});
   document.getElementById('chat').addEventListener('keypress', function(event) {
    if (event.keyCode == 13) {
