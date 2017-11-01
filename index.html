@@ -207,6 +207,429 @@
                         clearInterval(interval);
                       }
                     }, 500);
+                     web.nativeVoice = true;
+web.nativeVoiceName = "Google हिन्दी";
+SDK.updateAvatar = function(responseMessage, speak, urlprefix, elementPrefix, channelaudio, afterFunction, nativeVoice, lang, voice) {
+	try {
+ 
+	var noMedia = false;
+	if (SDK.canPlayVideo == null) {
+		if (!SDK.isMobile()) {
+			SDK.canPlayVideo = true;
+		} else {
+			SDK.canPlayVideo = false;
+			SDK.canPlayAudio = true;
+			// Check if auto play has been disable by the browser (mobile Chrome/Safari)
+			setTimeout(function() {
+				if (noMedia) {
+					SDK.canPlayVideo = null;
+					SDK.canPlayAudio = null;
+				} else {
+					if (SDK.canPlayVideo == false) {
+						SDK.initVideo = function() {
+							SDK.canPlayVideo = true;
+							SDK.audio = new Audio(SDK.url + '/chime.mp3');
+							SDK.audio.load();
+							SDK.autoPlayActionAudio = new Audio(SDK.url + '/chime.mp3');
+							SDK.autoPlayActionAudio.load();
+							SDK.autoPlayBackgroundAudio = new Audio(SDK.url + '/chime.mp3');
+							SDK.autoPlayBackgroundAudio.load();
+							SDK.updateAvatar(responseMessage, speak, urlprefix, elementPrefix, channelaudio, afterFunction, nativeVoice, lang, voice);
+							document.getElementById("sdkplaybutton2").style.display = "none";
+						};
+						var body = document.body || document.getElementsByTagName('body')[0];
+						var playButton = document.createElement('div');
+						var html = "<div id='sdkplaybutton2' style='position:fixed;bottom:32px;left:32px;z-index:164;'><img onclick='SDK.initVideo()' width='64' src='"
+							+ SDK.url + "/images/playsound.png'/></div>"
+						playButton.innerHTML = html;
+						body.appendChild(playButton);
+						setTimeout(function() {
+							document.getElementById("sdkplaybutton2").style.display = "none";
+						}, 10000);
+					}
+				}
+			}, SDK.autoPlayDelay);
+		}
+	}
+	nativeVoice = nativeVoice && SDK.speechSynthesis;
+	if (elementPrefix == null) {
+		elementPrefix = "";
+	}
+	var avatarStatus = document.getElementById(elementPrefix + "avatar-status");
+	if (avatarStatus != null) {
+		var status = "";
+		if (responseMessage.emote != null && responseMessage.emote != "" && responseMessage.emote != "NONE") {
+			status = responseMessage.emote.toLowerCase();
+		}
+		if (responseMessage.action != null && responseMessage.action != "") {
+			if (status != "") {
+				status = status + " : ";
+			}
+			status = status + responseMessage.action;
+		}
+		if (responseMessage.pose != null && responseMessage.pose != "") {
+			if (status != "") {
+				status = status + " : ";
+			}
+			status = status + responseMessage.pose;
+		}
+		avatarStatus.innerHTML = status;
+	}
+	if (responseMessage.avatarActionAudio != null && speak) {
+		var audio = SDK.autoPlayActionAudio;
+		if (audio == null) {
+			audio = new Audio(urlprefix + responseMessage.avatarActionAudio);
+		} else {
+			audio.src = urlprefix + responseMessage.avatarActionAudio;
+		}
+		if (SDK.canPlayVideo == null) {
+			audio.onplaying = new function() {
+			    SDK.canPlayVideo = true;
+			}
+		}
+		audio.play();
+	}
+	if (!speak || SDK.currentBackgroundAudio != responseMessage.avatarAudio) {
+		// Only switch if different audio.
+		if (SDK.backgroundAudio != null) {
+			SDK.backgroundAudio.pause();
+			SDK.currentBackgroundAudio = null;
+		}
+		if (responseMessage.avatarAudio != null && speak) {
+			SDK.currentBackgroundAudio = responseMessage.avatarAudio;
+			SDK.backgroundAudio = SDK.autoPlayBackgroundAudio;
+			if (SDK.backgroundAudio == null) {
+				SDK.backgroundAudio = new Audio(urlprefix + responseMessage.avatarAudio);
+			} else {
+				SDK.backgroundAudio.src = urlprefix + responseMessage.avatarAudio;
+			}
+			SDK.backgroundAudio.loop = true;
+			if (SDK.canPlayVideo == null) {
+				SDK.backgroundAudio.onplaying = new function() {
+				    document.getElementById("native-voice-name").value = "onplaying-back";
+					SDK.canPlayVideo = true;
+				}
+			}
+			SDK.backgroundAudio.play();
+		}
+	}
+	if (responseMessage.avatarType != null && responseMessage.avatarType.indexOf("video") != -1) {
+		var div = document.getElementById(elementPrefix + "avatar-image-div");
+		if (div != null) {
+			div.style.display = "none";
+		}
+		div = document.getElementById(elementPrefix + "avatar-video-div");
+		var canvas = null;
+		if (div != null) {
+			div.style.display = "inline-block";
+			if (responseMessage.avatarBackground != null) {
+				div.style.backgroundImage = "url(" + urlprefix + responseMessage.avatarBackground + ")";
+			}
+			var canvasDiv = document.getElementById(elementPrefix + "avatar-canvas-div");
+			if (((SDK.isChrome() && !SDK.isMobile()) || SDK.isFirefox() || SDK.useCanvas == true) && SDK.useCanvas != false && canvasDiv != null) {
+				div.style.position = "fixed";
+				div.style.top = "-1000";
+				div.style.left = "-1000";
+				div.style.opacity = "0";
+				div.style.zIndex = "-1";
+				canvasDiv.style.display = "inline-block";
+				canvas = document.getElementById(elementPrefix + "avatar-canvas");
+			}
+		}
+		var video = document.getElementById(elementPrefix + "avatar-video");
+		if (video == null) {
+			if (speak) {
+				if (nativeVoice) {
+					noMedia = true;
+					SDK.tts(SDK.stripTags(responseMessage.message), null, true, lang, voice);
+				} else {
+					var audio = SDK.play(urlprefix + responseMessage.speech, channelaudio);
+					var onended = audio.onended;
+					audio.onended = function() {
+						if (onended != null) {
+							onended();
+						}
+						if (afterFunction != null) {
+							afterFunction();
+						}
+					}
+				}
+			}
+			return;
+		} else {
+			if (SDK.canPlayVideo == null) {
+				video.onplaying = new function() {
+				    document.getElementById("native-voice-name").value = "onplaying-video";
+					SDK.canPlayVideo = true;
+				}
+			}
+			if (responseMessage.avatar.indexOf("mp4") != -1 && (SDK.isChrome() || SDK.isFirefox() || SDK.fixBrightness != true) && SDK.fixBrightness != false) {
+				// Hack to fix grey background in Chrome.
+				if (SDK.isChrome()) {
+					video.style.webkitFilter = "brightness(108.5%)";
+				} else {
+					video.style["filter"] = "brightness(1.085)";
+				}
+				if (canvas != null) {
+					if (SDK.isChrome()) {
+						canvas.style.webkitFilter = "brightness(108.5%)";
+					} else {
+						video.style["filter"] = "brightness(1.085)";
+					}
+				}
+			}
+			if (canvas == null) {
+				if (responseMessage.avatarBackground != null) {
+					video.poster = urlprefix + responseMessage.avatarBackground;				
+				}
+			}
+		}
+		var context = null;
+		var drawCanvas = null;
+		if (canvas != null) {
+		    context = canvas.getContext('2d');
+			if (SDK.timers[elementPrefix + "avatar-canvas"] == null) {
+				drawCanvas = function() {
+				    if (!video.paused && !video.ended && video.currentTime > 0) {
+				    	if (canvas.width != video.offsetWidth) {
+				    		canvas.width = video.offsetWidth;
+				    	}
+				    	if (canvas.height != video.offsetHeight) {
+				    		canvas.height = video.offsetHeight;
+				    	}
+				    	context.clearRect(0, 0, canvas.width, canvas.height);
+				    	context.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight);
+				    }
+				}
+				SDK.timers[elementPrefix + "avatar-canvas"] = drawCanvas;
+				setInterval(drawCanvas, 20);				
+			}
+		}
+		var end = function() {
+			video.src = urlprefix + responseMessage.avatar;
+			if (responseMessage.avatar2 == null) {
+				video.loop = true;
+			} else {
+				video.loop = false;
+				video.onended = function() {
+					var index = Math.floor(Math.random() * 5);
+					if (index == 4 && responseMessage.avatar5 != null) {
+						video.src = urlprefix + responseMessage.avatar5;
+					} else if (index == 3 && responseMessage.avatar4 != null) {
+						video.src = urlprefix + responseMessage.avatar4;
+					} else if (index == 2 && responseMessage.avatar3 != null) {
+						video.src = urlprefix + responseMessage.avatar3;
+					} else if (index == 1 && responseMessage.avatar2 != null) {
+						video.src = urlprefix + responseMessage.avatar2;
+					} else {
+						video.src = urlprefix + responseMessage.avatar;
+					}
+					video.play();
+				}
+			}
+			video.play();
+			if (afterFunction != null) {
+				afterFunction();
+			}
+		}
+		var talk = function() {
+			if (responseMessage.message != null && responseMessage.message.length > 0) {
+				if (responseMessage.avatarTalk != null) {
+					if (speak) {
+						if (responseMessage.speech == null && !nativeVoice) {
+							end();
+						} else {
+							video.src = urlprefix + responseMessage.avatar;
+							video.loop = true;
+							var playing = false;
+							video.play();
+ 
+							if (nativeVoice) {
+								if ('SpeechSynthesisUtterance' in window) {
+									utterance = new SpeechSynthesisUtterance(SDK.stripTags(responseMessage.message));
+								} else {
+									utterance = new SpeechSynthesisUtterance2(SDK.stripTags(responseMessage.message));
+								}
+                                SDK.utterance = utterance;
+                                SDK.utterance.rate = 0.7;
+								utterance.onstart = function() {
+									if (playing) {
+										return false;
+									}
+									if ('speechSynthesis' in window) {
+										speechSynthesis.pause();
+									}
+									video.src = urlprefix + responseMessage.avatarTalk;
+									video.loop = true;
+									video.oncanplay = function() {
+										if (playing) {
+											return false;
+										}
+										playing = true;
+										if ('speechSynthesis' in window) {
+											speechSynthesis.resume();
+										}
+									}
+									video.play();
+								}
+								utterance.onerror = function() {
+									console.log("error");
+									end();
+								}
+								utterance.onend = function() {
+									end();
+								}
+ 
+								SDK.nativeTTS(utterance, lang, voice);
+							} else {
+								//var audio = new Audio(urlprefix + responseMessage.speech, channelaudio);
+								var audio = SDK.play(urlprefix + responseMessage.speech, channelaudio);
+								//audio.onabort = function() {console.log("abort");}
+								audio.oncanplay = function() {
+									if (playing) {
+										return false;
+									}
+									audio.pause();
+									video.src = urlprefix + responseMessage.avatarTalk;
+									video.loop = true;
+									video.oncanplay = function() {
+										if (playing) {
+											return false;
+										}
+										playing = true;
+										audio.play();
+									}
+									video.play();
+								}
+								audio.onerror = function() {
+									console.log("error");
+									end();
+								}
+								//audio.onloadeddata = function() {console.log("loadeddata");}
+								//audio.onloadedmetadata = function() {console.log("loadedmetadata");}
+								//audio.onpause = function() {console.log("pause");}
+								//audio.onplay = function() {console.log("play");}
+								//audio.onplaying = function() {console.log("playing");}
+								//audio.ontimeupdate = function() {console.log("timeupdate");}
+								var onended = audio.onended;
+								audio.onended = function() {
+									if (onended != null) {
+										onended();
+									}
+									end();
+								}
+								audio.play();
+								video.play();
+							}
+						}
+					} else {
+						video.src = urlprefix + responseMessage.avatarTalk;
+						video.loop = false;
+						video.play();
+						var onended = video.onended;
+						video.onended = function() {
+							if (onended != null) {
+								onended();
+							}
+							end();
+						}
+					}
+				} else {
+					video.src = urlprefix + responseMessage.avatar;
+					video.loop = true;
+					video.play();
+					if (speak) {
+						if (nativeVoice) {
+							if ('SpeechSynthesisUtterance' in window) {
+								utterance = new SpeechSynthesisUtterance(SDK.stripTags(responseMessage.message));
+							} else {
+								utterance = new SpeechSynthesisUtterance2(SDK.stripTags(responseMessage.message));
+							}
+							utterance.onend = afterFunction;
+							SDK.nativeTTS(utterance, lang, voice);
+						} else {
+							var audio = SDK.play(urlprefix + responseMessage.speech, channelaudio);
+							var onended = audio.onended;
+							audio.onended = function() {
+								if (onended != null) {
+									onended();
+								}
+								if (afterFunction != null) {
+									afterFunction();
+								}
+							}
+						}
+					} else if (afterFunction != null) {
+						afterFunction();			
+					}
+				}
+			} else {
+				end();
+			}
+		}
+ 
+		if (responseMessage.avatarAction != null) {
+			video.src = urlprefix + responseMessage.avatarAction;
+			video.loop = false;
+			video.play();
+			var onended = video.onended;
+			video.onended = function() {
+				if (onended != null) {
+					onended();
+				}
+				talk();
+			}
+		} else {
+			talk();
+		}
+	} else {
+		var div = document.getElementById(elementPrefix + "avatar-video-div");
+		if (div != null) {
+			div.style.display = "none";
+		}
+		div = document.getElementById(elementPrefix + "avatar-canvas-div");
+		if (div != null) {
+			div.style.display = "none";
+		}
+		div = document.getElementById(elementPrefix + "avatar-image-div");
+		if (div != null) {
+			div.style.display = "inline-block";
+		}
+		var img = document.getElementById(elementPrefix + 'avatar');
+		if (img != null) {
+			img.src = urlprefix + responseMessage.avatar;
+		}
+		img = document.getElementById(elementPrefix + 'avatar2');
+		if (img != null) {
+			img.src = urlprefix + responseMessage.avatar;
+		}
+		if (speak && responseMessage.message != null && responseMessage.message.length > 0) {
+			if (nativeVoice) {
+				noMedia = true;
+				SDK.tts(SDK.stripTags(responseMessage.message), null, true, lang, voice);
+			} else if (responseMessage.speech != null) {
+				var audio = SDK.play(urlprefix + responseMessage.speech, channelaudio);
+				var onended = audio.onended;
+				audio.onended = function() {
+					if (onended != null) {
+						onended();
+					}
+					if (afterFunction != null) {
+						afterFunction();
+					}
+				}
+			}
+		} else {
+			noMedia = true;
+			if (afterFunction != null) {
+				afterFunction();
+			}
+		}
+	}
+ 
+	} catch(err) {
+	}
+}
                   	});
                   document.getElementById('chat').addEventListener('keypress', function(event) {
                    if (event.keyCode == 13) {
