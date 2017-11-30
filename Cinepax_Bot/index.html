@@ -703,6 +703,28 @@
                      $('#chat').val($(this).text());
                         web.sendMessage();
                         setReciverMessage();
+                        if($(this).text() == 'Comedy' || $(this).text() == 'Horror' || $(this).text() == 'Drama' || $(this).text() == 'New Release' || $(this).text() == 'Newly Added' || $(this).text() == 'Recommended for You'){
+                           setActive();
+                        }
+                  });
+                  function setActive(){
+                     $slideshow = $(".gallery ul");
+                     $slideactive = $slideshow.find("li.each").first().addClass('active').show();
+                  }
+                  $(document).on('click', '.next i', function(){
+                     $slideshow = $(".gallery ul");
+                     $slideactive = $slideshow.find("li.active").next();
+                        if(!$slideactive.length)
+                           $slideactive = $slideshow.find("li.each").first();    $slideshow.find("li.active").removeClass("active");
+                           $slideactive.addClass("active");
+                  });
+                  $(document).on('click', '.previous i', function(){
+                     $slideshow = $(".gallery ul");
+                     $slideactive = $slideshow.find("li.active").prev();
+                        if(!$slideactive.length)
+                           $slideactive = $slideshow.find("li.each").last();     
+                           $slideshow.find("li.active").removeClass("active");
+                           $slideactive.addClass("active");
                   });
                   
                   
