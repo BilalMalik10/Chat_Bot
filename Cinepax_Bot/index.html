@@ -712,14 +712,14 @@
                      $slideactive = $slideshow.find("li.each").first().addClass('active').show();
                   }
                   $(document).on('click', '.next i', function(){
-                     $slideshow = $(".gallery ul");
+                     $slideshow = $(this).parent().parent().parent().children('ul');
                      $slideactive = $slideshow.find("li.active").next();
                         if(!$slideactive.length)
                            $slideactive = $slideshow.find("li.each").first();    $slideshow.find("li.active").removeClass("active");
                            $slideactive.addClass("active");
                   });
                   $(document).on('click', '.previous i', function(){
-                     $slideshow = $(".gallery ul");
+                     $slideshow = $(this).parent().parent().parent().children('ul');
                      $slideactive = $slideshow.find("li.active").prev();
                         if(!$slideactive.length)
                            $slideactive = $slideshow.find("li.each").last();     
