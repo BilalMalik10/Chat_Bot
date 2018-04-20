@@ -57,7 +57,7 @@
          }
          #scroller{
          position: relative;
-         min-height: 380px;
+         min-height: 400px;
          overflow: hidden !important;
          }
          .chatbox_wrapper{
@@ -69,7 +69,7 @@
          #scroller-wrap{
          background: #ffffff !important;
          overflow-y: auto;
-         height: 340px;
+         height: 358px;
          }
          .btn-send{
          background: url(images/send_btn.png);
@@ -195,7 +195,7 @@
                   var web = new WebChatbotListener();
                   web.connection = sdk;
                   web.instance = '152326';
-                  web.instanceName = 'HBL Test Bot';
+                  web.instanceName = 'Digicel Bot';
                   $(document).ready(function () {
                   		$('#chat').val('get greetings');
                   		web.sendMessage();
@@ -212,7 +212,7 @@
                       }
                     }, 500);
                      web.nativeVoice = true;
-                  web.nativeVoiceName = "Google हिन्दी";
+                  web.nativeVoiceName = "Google English";
                   SDK.updateAvatar = function(responseMessage, speak, urlprefix, elementPrefix, channelaudio, afterFunction, nativeVoice, lang, voice) {
                   try {
                   
@@ -646,7 +646,7 @@
                   });
                   
                   function setSenderMessage(){
-                    var responseDiv = ' <div class="msg_container base_sent"><div class="col-md-9 col-xs-9"><div class="messages msg_sent"><p id="sender">'+document.getElementById('chat').value+'</p></div></div><div class="col-md-2 col-xs-2 avatar hide"><img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "></div></div>';
+                    var responseDiv = ' <div class="msg_container base_sent"><div class="col-md-10 col-xs-10"><div class="messages msg_sent"><p id="sender">'+document.getElementById('chat').value+'</p></div></div><div class="col-md-2 col-xs-2 avatar hide"><img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" class=" img-responsive "></div></div>';
                     $('#scroller-wrap').append(responseDiv);
                     //Scroll to bottom of div element
                     var scrollerWrap = document.getElementById("scroller-wrap");
@@ -657,7 +657,7 @@
                     var interval = setInterval(function(){
                       var response = document.getElementById('response').innerHTML;
                       if(response != '<i>thinking</i>'){
-                        var responseDiv = '<div class="msg_container base_receive"><div class="col-md-2 col-xs-2 avatar"><img src="images/hbl_thumbnail.png" class="img-responsive"></div><div class="col-md-9 col-xs-9"><div class="messages msg_receive"><p>'+response+'</p></div><p style="font-size: x-small; margin: 3px 11px -15px;">3:36 PM</p></div>';
+                        var responseDiv = '<div class="msg_container base_receive"><div class="col-md-2 col-xs-2 avatar"><img src="images/hbl_thumbnail.png" class="img-responsive"></div><div class="col-md-10 col-xs-10"><div class="messages msg_receive"><p>'+response+'</p></div><p style="font-size: x-small; margin: 3px 11px -15px;">3:36 PM</p></div>';
                           $('#scroller-wrap').append(responseDiv);
                           //Scroll to bottom of div element
                           var scrollerWrap = document.getElementById("scroller-wrap");

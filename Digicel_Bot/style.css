@@ -127,3 +127,11 @@ img {
     left:0px;
     bottom:0;
 }
+.style-btn {
+    background-color: red;
+    border: 1px solid red;
+    margin: 0 0 3px 3px;
+    width: 97px;
+    color: white;
+    font-size: 11px;
+}
