@@ -57,7 +57,7 @@
          }
          #scroller{
          position: relative;
-         min-height: 400px;
+         min-height: 500px;
          overflow: hidden !important;
          }
          .chatbox_wrapper{
@@ -69,7 +69,7 @@
          #scroller-wrap{
          background: #ffffff !important;
          overflow-y: auto;
-         height: 358px;
+         height: 458px;
          }
          .btn-send{
          background: url(images/send_btn.png);
@@ -155,7 +155,7 @@
    </head>
    <body>
       <div class="container">
-         <div class="row chat-window col-xs-5 col-md-3" id="chat_window_1" style="margin-left:10px;">
+         <div class="row chat-window col-xs-6 col-md-4" id="chat_window_1" style="margin-left:10px;">
             <div class="col-xs-12 col-md-12">
                <div class="panel panel-default">
                   <div class="panel-heading top-bar">
@@ -195,7 +195,7 @@
                   var web = new WebChatbotListener();
                   web.connection = sdk;
                   web.instance = '152326';
-                  web.instanceName = 'Digicel Bot';
+                  web.instanceName = 'HBL Test Bot';
                   $(document).ready(function () {
                   		$('#chat').val('get greetings');
                   		web.sendMessage();
@@ -212,7 +212,7 @@
                       }
                     }, 500);
                      web.nativeVoice = true;
-                  web.nativeVoiceName = "Google EN";
+                  web.nativeVoiceName = "Google English";
                   SDK.updateAvatar = function(responseMessage, speak, urlprefix, elementPrefix, channelaudio, afterFunction, nativeVoice, lang, voice) {
                   try {
                   
