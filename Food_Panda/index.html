@@ -197,7 +197,8 @@
                   web.instance = '157848';
                   web.instanceName = 'Food Panda';
                   $(document).ready(function () {
-                  		$('#chat').val('get greetings');
+				  var result = prompt("Please enter your email address.");
+                  		$('#chat').val('get greetings -' + result);
                   		web.sendMessage();
                    var interval = setInterval(function(){
                       var response = document.getElementById('response').innerHTML;
